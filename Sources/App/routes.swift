@@ -2,9 +2,11 @@ import Vapor
 
 func routes(_ app: Application) throws {
 
+    // MARK: - Product
+
     /// Returns all products with basic information
     app.get("products") { req -> [Product] in
-        // TODO: Use real database in future PR
+        // FIXME: Use real database in future PR
         return Stub().products
     }
 
@@ -23,4 +25,5 @@ func routes(_ app: Application) throws {
 
         return product
     }
+
 }
