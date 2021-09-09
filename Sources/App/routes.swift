@@ -1,14 +1,9 @@
 import Vapor
 
 func routes(_ app: Application) throws {
-    app.get { req in
-        return "It works!"
-    }
 
-    app.get("product") { req -> Product in
-        let product = try req.content.decode(Product.self)
-        print(product.name)
-        return product
+    app.get("products") { req -> [Product] in
+        return Stub().products
     }
 
     app.post("product") { req -> ProductResponse in
@@ -16,10 +11,6 @@ func routes(_ app: Application) throws {
         return ProductResponse(request: data)
     }
     
-}
-
-struct Product: Content {
-    var name: String
 }
 
 struct ProductResponse: Content {

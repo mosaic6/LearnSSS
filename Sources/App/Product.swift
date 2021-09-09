@@ -5,7 +5,7 @@
 //  Created by Joshua Walsh on 9/3/21.
 //
 
-import Foundation
+import Vapor
 
 struct Product: Content {
     var id: Int
