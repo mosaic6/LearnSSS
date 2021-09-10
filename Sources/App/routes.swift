@@ -27,6 +27,7 @@ func routes(_ app: Application) throws {
     }
 
     // MARK: - Shopping Cart
+
     let shoppingCart = app.grouped("shoppingCart")
 
     /// Submit orders in the shopping cart
@@ -53,7 +54,7 @@ func routes(_ app: Application) throws {
         return .ok
     }
 
-    /// Replace the new shopping cart in database
+    /// Delete the shopping cart in database
     shoppingCart.delete("delete") { req -> HTTPStatus in
         // FIXME: Delete shopping cart in database
         return .ok
