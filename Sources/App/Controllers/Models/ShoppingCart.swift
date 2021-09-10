@@ -9,6 +9,7 @@ import Vapor
 
 /// A list of orders that user selected
 struct ShoppingCart: Content {
+    var id: Int
     var orders: [Order]
 }
 

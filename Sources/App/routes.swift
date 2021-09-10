@@ -44,4 +44,18 @@ func routes(_ app: Application) throws {
         // FIXME: Store shopping car information in database
         return .ok
     }
+
+    /// Replace the shopping cart in database
+    shoppingCart.put("update") { req -> HTTPStatus in
+        let shoppingCart = try req.content.decode(ShoppingCart.self)
+        print(shoppingCart.orders.count)
+        // FIXME: Replace stored shopping car in database
+        return .ok
+    }
+
+    /// Replace the new shopping cart in database
+    shoppingCart.delete("delete") { req -> HTTPStatus in
+        // FIXME: Delete shopping cart in database
+        return .ok
+    }
 }
