@@ -36,4 +36,12 @@ func routes(_ app: Application) throws {
         // FIXME: Check with data base and ensure there is enough project.
         return .ok
     }
+
+    /// Save the shopping cart
+    shoppingCart.post("save") { req -> HTTPStatus in
+        let shoppingCart = try req.content.decode(ShoppingCart.self)
+        print(shoppingCart.orders.count)
+        // FIXME: Store shopping car information in database
+        return .ok
+    }
 }
