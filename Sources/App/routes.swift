@@ -1,18 +1,19 @@
 import Vapor
+import Fluent
+import FluentMongoDriver
 
 func routes(_ app: Application) throws {
 
     // MARK: - Product
 
     /// Returns all products with basic information
-    app.get("products") { req -> [Product] in
-        // FIXME: Use real database in future PR
-        return Stub().products
+    app.get("products") { req -> EventLoopFuture<[Product]> in
+        return Product.query(on: req.db).all()
     }
 
     /// Returns single product with details
-    app.get("product", ":productId", "details") { req -> Product in
-        guard let id = req.parameters.get("productId", as: Int.self
+    app.get("product", ":id", "details") { req -> Product in
+        guard let id = req.parameters.get("id", as: UUID.self
         ) else {
             throw Abort(.badRequest)
         }
@@ -31,32 +32,29 @@ func routes(_ app: Application) throws {
     let shoppingCart = app.grouped("shoppingCart")
 
     /// Submit orders in the shopping cart
-    shoppingCart.post("submit") { req -> HTTPStatus in
+    shoppingCart.post("submit") { req -> EventLoopFuture<ShoppingCart> in
         let shoppingCart = try req.content.decode(ShoppingCart.self)
-        print(shoppingCart.orders.count)
-        // FIXME: Check with data base and ensure there is enough project.
-        return .ok
+        return shoppingCart.create(on: req.db)
+            .map { shoppingCart }
     }
 
     /// Save the shopping cart
-    shoppingCart.post("save") { req -> HTTPStatus in
+    shoppingCart.post("save") { req -> EventLoopFuture<ShoppingCart> in
         let shoppingCart = try req.content.decode(ShoppingCart.self)
-        print(shoppingCart.orders.count)
-        // FIXME: Store shopping car information in database
-        return .ok
+        return shoppingCart.save(on: req.db).map {
+            shoppingCart
+        }
     }
 
     /// Replace the shopping cart in database
-    shoppingCart.put("update") { req -> HTTPStatus in
+    shoppingCart.put("update") { req -> EventLoopFuture<ShoppingCart> in
         let shoppingCart = try req.content.decode(ShoppingCart.self)
-        print(shoppingCart.orders.count)
-        // FIXME: Replace stored shopping car in database
-        return .ok
+        return shoppingCart.update(on: req.db).map { shoppingCart }
     }
 
     /// Delete the shopping cart in database
-    shoppingCart.delete("delete") { req -> HTTPStatus in
-        // FIXME: Delete shopping cart in database
-        return .ok
+    shoppingCart.delete("delete") { req -> EventLoopFuture<ShoppingCart> in
+        let shoppingCart = try req.content.decode(ShoppingCart.self)
+        return shoppingCart.delete(on: req.db).map { shoppingCart }
     }
 }

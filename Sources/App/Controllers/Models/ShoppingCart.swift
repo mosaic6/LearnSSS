@@ -6,15 +6,38 @@
 //
 
 import Vapor
+import Fluent
 
 /// A list of orders that user selected
-struct ShoppingCart: Content {
-    var id: Int
+final class ShoppingCart: Model, Content {
+
+    static let schema = "cart"
+
+    @ID
+    var id: UUID?
+
+    @Field(key: "orders")
     var orders: [Order]
+
+    init() {}
+
+    init(id: UUID? = nil, orders: [Order]) {
+        self.id = id
+        self.orders = orders
+    }
 }
 
-/// Order details of a single product
-struct Order: Content {
-    var productId: Int
-    var quantity: Int
+// MARK: Migration
+
+struct CreateShoppingCart: Migration {
+    func prepare(on database: Database) -> EventLoopFuture<Void> {
+        database.schema("cart")
+            .id()
+            .field("orders", .array(of: .custom(Order.self)))
+            .create()
+    }
+
+    func revert(on database: Database) -> EventLoopFuture<Void> {
+        database.schema("cart").delete()
+    }
 }
