@@ -10,7 +10,7 @@ import Foundation
 class Stub {
     var products: [Product] = [
         Product(
-            id: 1,
+            id: UUID(uuidString: "1"),
             name: "Coconut Cupcakes",
             description: """
             Easy Chocolate Coconut Cupcakes are ultra tender and moist chocolate cupcakes topped with homemade coconut buttercream frosting and toasted coconut. Add some egg candies and it's the perfect Easter treat!
@@ -20,7 +20,7 @@ class Stub {
             quantity: 9
         ),
         Product(
-            id: 2,
+            id: UUID(uuidString: "3"),
             name: "Chocolate Chip Cookie",
             description: """
             This Chocolate Chip Cookie Cake recipe features a thick base of chewy and slightly gooey chocolate chip cookie topped with creamy vanilla buttercream and garnished with ALL the sprinkles. It's the perfect birthday cake for any cookie lover!
@@ -30,7 +30,7 @@ class Stub {
             quantity: 10
         ),
         Product(
-            id: 3,
+            id: UUID(uuidString: "3"),
             name: "Lemon Cupcakes",
             description: """
             Easy homemade Lemon Cupcakes with lemon cream cheese frosting have the perfect balance of sweet and tanginess and are perfect for spring, Easter, or Mother's Day!
