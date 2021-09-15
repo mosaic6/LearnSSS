@@ -40,7 +40,13 @@ final class Product: Model, Content {
 
     init() {}
 
-    init(id: UUID? = nil, name: String, description: String, imageURL: String, price: String, stockQuantity: Int, category: Category) {
+    init(id: UUID? = nil,
+         name: String,
+         description: String,
+         imageURL: String,
+         price: String,
+         stockQuantity: Int,
+         category: Category) {
         self.id = id
         self.name = name
         self.description = description
