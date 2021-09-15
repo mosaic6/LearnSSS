@@ -8,6 +8,11 @@
 import Vapor
 import Fluent
 
+enum Category: String, CaseIterable, Codable {
+    case food
+    case drink
+}
+
 final class Product: Model, Content {
 
     static let schema = "products"
@@ -27,18 +32,22 @@ final class Product: Model, Content {
     @Field(key: "price")
     var price: String
 
-    @Field(key: "quantity")
-    var quantity: Int
+    @Field(key: "stockQuantity")
+    var stockQuantity: Int
+
+    @Enum(key: "category")
+    var category: Category
 
     init() {}
 
-    init(id: UUID? = nil, name: String, description: String, imageURL: String, price: String, quantity: Int) {
+    init(id: UUID? = nil, name: String, description: String, imageURL: String, price: String, stockQuantity: Int, category: Category) {
         self.id = id
         self.name = name
         self.description = description
         self.imageURL = imageURL
         self.price = price
-        self.quantity = quantity
+        self.stockQuantity = stockQuantity
+        self.category = category
     }
 }
 
@@ -52,7 +61,8 @@ struct CreateProduct: Migration {
             .field("description", .string)
             .field("imageURL", .string)
             .field("price", .string)
-            .field("quantity", .int)
+            .field("stockQuantity", .int)
+            .field("category", .enum(.init(name: "Category", cases: ["food", "drink"])))
             .create()
     }
 

@@ -38,7 +38,7 @@ struct CreateOrder: Migration {
         database.schema("order")
             .id()
             .field("productId", .uuid, .required)
-            .field("quanity", .int)
+            .field("quantity", .int)
             .create()
     }
 
