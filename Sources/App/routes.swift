@@ -12,19 +12,21 @@ func routes(_ app: Application) throws {
     }
 
     /// Returns single product with details
-    app.get("product", ":id", "details") { req -> Product in
-        guard let id = req.parameters.get("id", as: UUID.self
-        ) else {
+    app.get("products", ":id") { req -> EventLoopFuture<Product> in
+        guard let id = req.parameters.get("id", as: UUID.self) else {
             throw Abort(.badRequest)
         }
 
-        guard let product = Stub().products.first(where: { product in
-            product.id == id
-        }) else {
-            throw Abort(.badRequest)
-        }
+        return Product.find(id, on: req.db)
+            .unwrap(or: Abort(.notFound))
+    }
 
-        return product
+    let product = app.grouped("product")
+
+    // Create a single product to post to the DB
+    product.post("submit") { req -> EventLoopFuture<Product> in
+        let product = try req.content.decode(Product.self)
+        return product.create(on: req.db).map { product }
     }
 
     // MARK: - Shopping Cart
@@ -34,6 +36,15 @@ func routes(_ app: Application) throws {
     /// Submit orders in the shopping cart
     shoppingCart.post("submit") { req -> EventLoopFuture<ShoppingCart> in
         let shoppingCart = try req.content.decode(ShoppingCart.self)
+
+        let product = try req.content.decode(Product.self)
+        if product.stockQuantity > 0 {
+            product.stockQuantity -= 1
+        } else {
+            // TODO: It would be helpful to have a more meaninful error here
+            throw Abort(.noContent)
+        }
+
         return shoppingCart.create(on: req.db)
             .map { shoppingCart }
     }
