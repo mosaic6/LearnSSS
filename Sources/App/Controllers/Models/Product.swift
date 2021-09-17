@@ -55,6 +55,10 @@ final class Product: Model, Content {
         self.stockQuantity = stockQuantity
         self.category = category
     }
+
+    func decreaseStockQuanity() throws {
+        self.stockQuantity -= 1s
+    }
 }
 
 // MARK: Migration
