@@ -37,7 +37,10 @@ func routes(_ app: Application) throws {
     shoppingCart.post("submit") { req -> EventLoopFuture<ShoppingCart> in
         let shoppingCart = try req.content.decode(ShoppingCart.self)
 
-        try _ = decreaseProductStockCount(req: req, in: shoppingCart)
+        // decrease product stockQuantity count
+        for order in shoppingCart.orders {
+            updateProduct(id: order.productId, quantity: order.quantity, req: req)
+        }
 
         return shoppingCart.create(on: req.db)
             .map { shoppingCart }
@@ -64,26 +67,13 @@ func routes(_ app: Application) throws {
     }
 }
 
-// MARK: - Helpers
+// MARK: - Product Helpers
 
-func decreaseProductStockCount(req: Request, in shoppingCart: ShoppingCart) throws -> EventLoopFuture<Product>? {
-    for product in shoppingCart.orders {
-        return Product.find(product.id, on: req.db)
-            .unwrap(or: Abort(.notFound))
-            .flatMap { product in
-                if product.stockQuantity > 0 {
-                    product.stockQuantity -= 1
-                }
-                return product.save(on: req.db)
-                    .map { Product(id: product.id,
-                                   name: product.name,
-                                   description: product.description,
-                                   imageURL: product.imageURL,
-                                   price: product.price,
-                                   stockQuantity: product.stockQuantity,
-                                   category: product.category) }
-            }
+func updateProduct(id: UUID, quantity: Int, req: Request) {
+    _ = Product.find(id, on: req.db)
+        .unwrap(or: Abort(.notFound))
+        .flatMap { item -> EventLoopFuture<Void> in
+        item.decreaseStockQuanity(quantity: quantity)
+        return item.update(on: req.db)
     }
-
-    return nil
 }
