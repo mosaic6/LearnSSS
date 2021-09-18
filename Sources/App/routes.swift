@@ -39,7 +39,7 @@ func routes(_ app: Application) throws {
 
         // decrease product stockQuantity count
         for order in shoppingCart.orders {
-            updateProduct(id: order.productId, quantity: order.quantity, req: req)
+            updateProductStockCount(id: order.productId, quantity: order.quantity, req: req)
         }
 
         return shoppingCart.create(on: req.db)
@@ -69,7 +69,7 @@ func routes(_ app: Application) throws {
 
 // MARK: - Product Helpers
 
-func updateProduct(id: UUID, quantity: Int, req: Request) {
+func updateProductStockCount(id: UUID, quantity: Int, req: Request) {
     _ = Product.find(id, on: req.db)
         .unwrap(or: Abort(.notFound))
         .flatMap { item -> EventLoopFuture<Void> in
