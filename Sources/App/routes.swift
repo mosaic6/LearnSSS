@@ -37,12 +37,9 @@ func routes(_ app: Application) throws {
     shoppingCart.post("submit") { req -> EventLoopFuture<ShoppingCart> in
         let shoppingCart = try req.content.decode(ShoppingCart.self)
 
-        let product = try req.content.decode(Product.self)
-        if product.stockQuantity > 0 {
-            product.stockQuantity -= 1
-        } else {
-            // TODO: It would be helpful to have a more meaninful error here
-            throw Abort(.noContent)
+        // decrease product stockQuantity count
+        for order in shoppingCart.orders {
+            updateProductStockCount(id: order.productId, quantity: order.quantity, req: req)
         }
 
         return shoppingCart.create(on: req.db)
@@ -67,5 +64,16 @@ func routes(_ app: Application) throws {
     shoppingCart.delete("delete") { req -> EventLoopFuture<ShoppingCart> in
         let shoppingCart = try req.content.decode(ShoppingCart.self)
         return shoppingCart.delete(on: req.db).map { shoppingCart }
+    }
+}
+
+// MARK: - Product Helpers
+
+func updateProductStockCount(id: UUID, quantity: Int, req: Request) {
+    _ = Product.find(id, on: req.db)
+        .unwrap(or: Abort(.notFound))
+        .flatMap { item -> EventLoopFuture<Void> in
+        item.decreaseStockQuanity(quantity: quantity)
+        return item.update(on: req.db)
     }
 }

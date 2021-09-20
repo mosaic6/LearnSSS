@@ -55,6 +55,12 @@ final class Product: Model, Content {
         self.stockQuantity = stockQuantity
         self.category = category
     }
+
+    func decreaseStockQuanity(quantity: Int) {
+        if self.stockQuantity > 0 {
+            self.stockQuantity -= quantity
+        }
+    }   
 }
 
 // MARK: Migration
