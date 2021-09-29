@@ -82,3 +82,14 @@ struct CreateProduct: Migration {
         database.schema("products").delete()
     }
 }
+
+// MARK: - Product Helpers
+
+func updateProductStockCount(id: UUID, quantity: Int, req: Request) {
+    _ = Product.find(id, on: req.db)
+        .unwrap(or: Abort(.notFound))
+        .flatMap { item -> EventLoopFuture<Void> in
+        item.decreaseStockQuanity(quantity: quantity)
+        return item.update(on: req.db)
+    }
+}
