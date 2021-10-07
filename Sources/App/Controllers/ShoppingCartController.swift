@@ -33,8 +33,14 @@ struct ShoppingCartController {
         return shoppingCart.update(on: req.db).map { shoppingCart }
     }
 
-    func delete(req: Request) throws -> EventLoopFuture<ShoppingCart> {
-        let shoppingCart = try req.content.decode(ShoppingCart.self)
-        return shoppingCart.delete(on: req.db).map { shoppingCart }
+    func delete(req: Request) throws -> EventLoopFuture<HTTPStatus> {
+        guard let id = req.parameters.get("id", as: UUID.self) else {
+            throw Abort(.badRequest)
+        }
+
+        return ShoppingCart.find(id, on: req.db)
+            .unwrap(or: Abort(.notFound))
+            .flatMap { $0.delete(on: req.db) }
+            .map { .ok }
     }
 }
