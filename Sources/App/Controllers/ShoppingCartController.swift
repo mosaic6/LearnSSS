@@ -9,18 +9,42 @@ import Foundation
 import Vapor
 
 struct ShoppingCartController {
-    func submit(req: Request) throws -> EventLoopFuture<ShoppingCart> {
+
+    /// Fetch a shopping cart by ID
+    func read(req: Request) throws -> EventLoopFuture<ShoppingCart> {
+        guard let id = req.parameters.get("id", as: UUID.self) else {
+            throw Abort(.badRequest)
+        }
+
+        return ShoppingCart.find(id, on: req.db)
+            .unwrap(or: Abort(.notFound))
+    }
+
+    /// Submitting a shopping cart will perform the following actions
+    /// - Update the product stock quantity
+    /// - Remove/Delete the shopping cart object from the database
+    func submit(req: Request) throws -> EventLoopFuture<HTTPStatus> {
+        guard let id = req.parameters.get("id", as: UUID.self) else {
+            throw Abort(.badRequest)
+        }
+
         let shoppingCart = try req.content.decode(ShoppingCart.self)
 
         // decrease product stockQuantity count
         for order in shoppingCart.orders {
-            updateProductStockCount(id: order.productId, quantity: order.quantity, req: req)
+            guard let productId = order.product.id else {
+                throw Abort(.notFound)                
+            }
+            updateProductStockCount(id: productId, quantity: order.quantity, req: req)
         }
 
-        return shoppingCart.create(on: req.db)
-            .map { shoppingCart }
+        return ShoppingCart.find(id, on: req.db)
+            .unwrap(or: Abort(.notFound))
+            .flatMap { $0.delete(on: req.db) }
+            .map { .ok }
     }
 
+    /// Saves a single shopping cart
     func save(req: Request) throws -> EventLoopFuture<ShoppingCart> {
         let shoppingCart = try req.content.decode(ShoppingCart.self)
         return shoppingCart.save(on: req.db).map {
@@ -28,11 +52,22 @@ struct ShoppingCartController {
         }
     }
 
+    // TODO: Fix update request
     func update(req: Request) throws -> EventLoopFuture<ShoppingCart> {
+        guard let id = req.parameters.get("id", as: UUID.self) else {
+            throw Abort(.badRequest)
+        }
+
         let shoppingCart = try req.content.decode(ShoppingCart.self)
-        return shoppingCart.update(on: req.db).map { shoppingCart }
+
+//        return shoppingCart.update(on: req.db).map { shoppingCart }
+
+        return ShoppingCart.find(id, on: req.db)
+            .unwrap(or: Abort(.notFound))
+            .map { $0.update(on: req.db) }
     }
 
+    /// Removes the shopping cart from the database
     func delete(req: Request) throws -> EventLoopFuture<HTTPStatus> {
         guard let id = req.parameters.get("id", as: UUID.self) else {
             throw Abort(.badRequest)
