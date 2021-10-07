@@ -16,17 +16,17 @@ final class Order: Model, Content {
     @ID
     var id: UUID?
 
-    @Field(key: "productId")
-    var productId: UUID
+    @Field(key: "product")
+    var product: Product
 
     @Field(key: "quantity")
     var quantity: Int
 
     init() {}
 
-    init(id: UUID? = nil, productId: UUID, quantity: Int) {
+    init(id: UUID? = nil, product: Product, quantity: Int) {
         self.id = id
-        self.productId = productId
+        self.product = product
         self.quantity = quantity
     }
 }
@@ -37,7 +37,7 @@ struct CreateOrder: Migration {
     func prepare(on database: Database) -> EventLoopFuture<Void> {
         database.schema("order")
             .id()
-            .field("productId", .uuid, .required)
+            .field("product", .custom(Product.self), .required)
             .field("quantity", .int)
             .create()
     }

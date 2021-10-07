@@ -11,7 +11,7 @@ import Fluent
 /// A list of orders that user selected
 final class ShoppingCart: Model, Content {
 
-    static let schema = "cart"
+    static let schema = "shoppingCart"
 
     @ID
     var id: UUID?
@@ -31,13 +31,13 @@ final class ShoppingCart: Model, Content {
 
 struct CreateShoppingCart: Migration {
     func prepare(on database: Database) -> EventLoopFuture<Void> {
-        database.schema("cart")
+        database.schema(ShoppingCart.schema)
             .id()
             .field("orders", .array(of: .custom(Order.self)))
             .create()
     }
 
     func revert(on database: Database) -> EventLoopFuture<Void> {
-        database.schema("cart").delete()
+        database.schema(ShoppingCart.schema).delete()
     }
 }
