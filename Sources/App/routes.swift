@@ -25,7 +25,7 @@ func routes(_ app: Application) throws {
     /// Replace the shopping cart in database
     shoppingCart.put("update", use: shoppingCartController.update)
     /// Delete the shopping cart in database
-    shoppingCart.delete("delete", use: shoppingCartController.delete)
+    shoppingCart.delete("delete", ":id", use: shoppingCartController.delete)
 }
 
 
