@@ -35,6 +35,9 @@ final class Product: Model, Content {
     @Field(key: "stockQuantity")
     var stockQuantity: Int
 
+    @Field(key: "isFeatured")
+    var isFeatured: Bool
+
     @Enum(key: "category")
     var category: Category
 
@@ -46,6 +49,7 @@ final class Product: Model, Content {
          imageURL: String,
          price: String,
          stockQuantity: Int,
+         isFeatured: Bool,
          category: Category) {
         self.id = id
         self.name = name
@@ -53,6 +57,7 @@ final class Product: Model, Content {
         self.imageURL = imageURL
         self.price = price
         self.stockQuantity = stockQuantity
+        self.isFeatured = isFeatured
         self.category = category
     }
 
@@ -74,6 +79,7 @@ struct CreateProduct: Migration {
             .field("imageURL", .string)
             .field("price", .string)
             .field("stockQuantity", .int)
+            .field("isFeatured", .bool)
             .field("category", .enum(.init(name: "Category", cases: ["food", "drink"])))
             .create()
     }
