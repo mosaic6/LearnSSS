@@ -52,7 +52,7 @@ struct ShoppingCartController {
         }
     }
 
-    // Updates a single shopping cart
+    /// Updates a single shopping cart
     func update(req: Request) throws -> EventLoopFuture<ShoppingCart> {
         guard let id = req.parameters.get("id", as: UUID.self) else {
             throw Abort(.badRequest)
