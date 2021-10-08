@@ -18,6 +18,7 @@ class Stub {
             imageURL: "https://www.handletheheat.com/wp-content/uploads/2020/03/Homemade-Chocolate-Coconut-Cupcakes-SQUARE-02-1536x1536.jpg",
             price: "7.00",
             stockQuantity: 9,
+            isFeatured: true,
             category: .food
         ),
         Product(
@@ -29,6 +30,7 @@ class Stub {
             imageURL: "https://www.handletheheat.com/wp-content/uploads/2016/07/Chocolate-Chip-Cookie-Cake-SQUARE-1536x1536.jpg",
             price: "8.00",
             stockQuantity: 10,
+            isFeatured: false,
             category: .food
         ),
         Product(
@@ -40,6 +42,7 @@ class Stub {
             imageURL: "https://www.handletheheat.com/wp-content/uploads/2019/03/lemon-cupcakes-SQUARE-02.jpg",
             price: "9.00",
             stockQuantity: 11,
+            isFeatured: false,
             category: .food
         )
     ]
