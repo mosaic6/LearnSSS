@@ -52,7 +52,7 @@ struct ShoppingCartController {
         }
     }
 
-    // TODO: Fix update request
+    // Updates a single shopping cart
     func update(req: Request) throws -> EventLoopFuture<ShoppingCart> {
         guard let id = req.parameters.get("id", as: UUID.self) else {
             throw Abort(.badRequest)
@@ -60,11 +60,13 @@ struct ShoppingCartController {
 
         let shoppingCart = try req.content.decode(ShoppingCart.self)
 
-//        return shoppingCart.update(on: req.db).map { shoppingCart }
-
         return ShoppingCart.find(id, on: req.db)
             .unwrap(or: Abort(.notFound))
-            .map { $0.update(on: req.db) }
+            .flatMap { cart in
+                cart.orders = shoppingCart.orders
+                return cart.save(on: req.db)
+                    .map { ShoppingCart(id: cart.id, orders: cart.orders)}
+            }
     }
 
     /// Removes the shopping cart from the database
