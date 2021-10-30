@@ -10,13 +10,9 @@ import Vapor
 
 struct ShoppingCartController {
 
-    /// Fetch a shopping cart by ID
+    /// Fetch a shopping cart
     func read(req: Request) throws -> EventLoopFuture<ShoppingCart> {
-        guard let id = req.parameters.get("id", as: UUID.self) else {
-            throw Abort(.badRequest)
-        }
-
-        return ShoppingCart.find(id, on: req.db)
+        return ShoppingCart.query(on: req.db).first()
             .unwrap(or: Abort(.notFound))
     }
 

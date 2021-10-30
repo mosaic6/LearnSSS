@@ -19,7 +19,7 @@ func routes(_ app: Application) throws {
 
     let shoppingCart = app.grouped("shoppingCart")
     /// Returns single shopping cart
-    shoppingCart.get(":id", use: shoppingCartController.read)
+    shoppingCart.get(use: shoppingCartController.read)
     /// Submit orders in the shopping cart
     shoppingCart.post("submit", ":id", use: shoppingCartController.submit)
     /// Save the shopping cart
