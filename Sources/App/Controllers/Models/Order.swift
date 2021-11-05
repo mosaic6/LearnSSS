@@ -24,7 +24,7 @@ final class Order: Model, Content {
 
     init() {}
 
-    init(id: UUID? = nil, product: Product, quantity: Int) {
+    init(id: UUID? = UUID(), product: Product, quantity: Int) {
         self.id = id
         self.product = product
         self.quantity = quantity
