@@ -20,10 +20,6 @@ struct ShoppingCartController {
     /// - Update the product stock quantity
     /// - Remove/Delete the shopping cart object from the database
     func submit(req: Request) throws -> EventLoopFuture<HTTPStatus> {
-        guard let id = req.parameters.get("id", as: UUID.self) else {
-            throw Abort(.badRequest)
-        }
-
         let shoppingCart = try req.content.decode(ShoppingCart.self)
 
         // decrease product stockQuantity count
@@ -34,29 +30,27 @@ struct ShoppingCartController {
             updateProductStockCount(id: productId, quantity: order.quantity, req: req)
         }
 
-        return ShoppingCart.find(id, on: req.db)
-            .unwrap(or: Abort(.notFound))
-            .flatMap { $0.delete(on: req.db) }
+        return ShoppingCart()
+            .delete(on: req.db)
             .map { .ok }
     }
 
     /// Saves a single shopping cart
     func save(req: Request) throws -> EventLoopFuture<ShoppingCart> {
         let shoppingCart = try req.content.decode(ShoppingCart.self)
-        return shoppingCart.save(on: req.db).map {
-            shoppingCart
-        }
+        
+        return shoppingCart
+            .save(on: req.db)
+            .map {
+                shoppingCart
+            }
     }
 
     /// Updates a single shopping cart
     func update(req: Request) throws -> EventLoopFuture<ShoppingCart> {
-        guard let id = req.parameters.get("id", as: UUID.self) else {
-            throw Abort(.badRequest)
-        }
-
         let shoppingCart = try req.content.decode(ShoppingCart.self)
 
-        return ShoppingCart.find(id, on: req.db)
+        return ShoppingCart.query(on: req.db).first()
             .unwrap(or: Abort(.notFound))
             .flatMap { cart in
                 cart.orders = shoppingCart.orders
@@ -67,11 +61,7 @@ struct ShoppingCartController {
 
     /// Removes the shopping cart from the database
     func delete(req: Request) throws -> EventLoopFuture<HTTPStatus> {
-        guard let id = req.parameters.get("id", as: UUID.self) else {
-            throw Abort(.badRequest)
-        }
-
-        return ShoppingCart.find(id, on: req.db)
+        return ShoppingCart.query(on: req.db).first()
             .unwrap(or: Abort(.notFound))
             .flatMap { $0.delete(on: req.db) }
             .map { .ok }
