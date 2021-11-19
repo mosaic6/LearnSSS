@@ -29,5 +29,3 @@ func routes(_ app: Application) throws {
     /// Delete the shopping cart in database
     shoppingCart.delete("delete", use: shoppingCartController.delete)
 }
-
-

@@ -16,14 +16,14 @@ final class ShoppingCart: Model, Content {
     @ID
     var id: UUID?
 
-    @Field(key: "orders")
-    var orders: [Order]
-
+    @Field(for: "products")
+    var products: [Product]
+    
     init() {}
-
-    init(id: UUID? = nil, orders: [Order]) {
+`
+    init(id: UUID? = nil, products: [Product]) {
         self.id = id
-        self.orders = orders
+        self.products = products
     }
 }
 
@@ -33,7 +33,7 @@ struct CreateShoppingCart: Migration {
     func prepare(on database: Database) -> EventLoopFuture<Void> {
         database.schema(ShoppingCart.schema)
             .id()
-            .field("orders", .array(of: .custom(Order.self)))
+            .field("products", .array(of: .custom(Product.self)))
             .create()
     }
 
