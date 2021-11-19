@@ -11,7 +11,7 @@ public func configure(_ app: Application) throws {
     try app.databases.use(.mongo(connectionString: connectionString), as: .mongo)
 
     // Adds models in list of migrations to run
-    app.migrations.add([CreateProduct(), CreateOrder(), CreateShoppingCart()])
+    app.migrations.add([CreateProduct(), CreateShoppingCart()])
     app.logger.logLevel = .debug
 
     // Automatically runs migration and waits for result

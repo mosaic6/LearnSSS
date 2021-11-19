@@ -16,11 +16,11 @@ final class ShoppingCart: Model, Content {
     @ID
     var id: UUID?
 
-    @Field(for: "products")
+    @Field(key: "products")
     var products: [Product]
     
     init() {}
-`
+
     init(id: UUID? = nil, products: [Product]) {
         self.id = id
         self.products = products
