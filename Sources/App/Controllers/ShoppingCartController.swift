@@ -23,11 +23,11 @@ struct ShoppingCartController {
         let shoppingCart = try req.content.decode(ShoppingCart.self)
 
         // decrease product stockQuantity count
-        for order in shoppingCart.orders {
-            guard let productId = order.product.id else {
-                throw Abort(.notFound)                
+        for product in shoppingCart.products {
+            guard let productId = product.id else {
+                throw Abort(.notFound)
             }
-            updateProductStockCount(id: productId, quantity: order.quantity, req: req)
+            updateProductStockCount(id: productId, quantity: product.selectedQuantity, req: req)
         }
 
         return ShoppingCart()
@@ -53,9 +53,9 @@ struct ShoppingCartController {
         return ShoppingCart.query(on: req.db).first()
             .unwrap(or: Abort(.notFound))
             .flatMap { cart in
-                cart.orders = shoppingCart.orders
+                cart.products = shoppingCart.products
                 return cart.save(on: req.db)
-                    .map { ShoppingCart(id: cart.id, orders: cart.orders)}
+                    .map { ShoppingCart(id: cart.id, products: cart.products)}
             }
     }
 
