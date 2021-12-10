@@ -41,8 +41,8 @@ final class Product: Model, Content {
     @Field(key: "isFeatured")
     var isFeatured: Bool
 
-    @Enum(key: "category")
-    var category: Category
+//    @Enum(key: "category")
+//    var category: Category
 
     init() {}
 
@@ -53,8 +53,9 @@ final class Product: Model, Content {
          price: String,
          stockQuantity: Int,
          selectedQuantity: Int,
-         isFeatured: Bool,
-         category: Category) {
+         isFeatured: Bool
+//         category: Category
+    ) {
         self.id = id
         self.name = name
         self.description = description
@@ -63,7 +64,7 @@ final class Product: Model, Content {
         self.stockQuantity = stockQuantity
         self.selectedQuantity = selectedQuantity
         self.isFeatured = isFeatured
-        self.category = category
+//        self.category = category
     }
 
     func decreaseStockQuanity(quantity: Int) {
@@ -86,7 +87,7 @@ struct CreateProduct: Migration {
             .field("stockQuantity", .int)
             .field("selectedQuantity", .int)
             .field("isFeatured", .bool)
-            .field("category", .enum(.init(name: "Category", cases: ["food", "drink"])))
+//            .field("category", .enum(.init(name: "Category", cases: ["food", "drink"])))
             .create()
     }
 

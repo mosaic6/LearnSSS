@@ -1,21 +1,27 @@
 import Vapor
 import Fluent
 import FluentMongoDriver
+import FluentPostgresDriver
+
 
 // configures your application
 public func configure(_ app: Application) throws {
-    // uncomment to serve files from /Public folder
-    // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
     let connectionString = "mongodb+srv://joshbnr:learnsss@cluster0.ndjmq.mongodb.net/LearnSSS?retryWrites=true&w=majority"
 
-    try app.databases.use(.mongo(connectionString: connectionString), as: .mongo)
+    if app.environment == .testing {
+        app.databases.use(.postgres(hostname: "localhost",
+                                    port: 5433,
+                                    username: "vapor_username",
+                                    password: "vapor_password",
+                                    database: "vapor-test"),
+                          as: .psql)
+    } else {
+        try app.databases.use(.mongo(connectionString: connectionString), as: .mongo)
+    }
+    app.migrations.add(CreateProduct())
+    app.migrations.add(CreateShoppingCart())
 
-    // Adds models in list of migrations to run
-    app.migrations.add([CreateProduct(), CreateShoppingCart()])
     app.logger.logLevel = .debug
-
-    // Automatically runs migration and waits for result
     try app.autoMigrate().wait()
-    // register routes
     try routes(app)
 }
