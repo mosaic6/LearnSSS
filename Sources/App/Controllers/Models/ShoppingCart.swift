@@ -13,7 +13,7 @@ final class ShoppingCart: Model, Content {
 
     static let schema = "shoppingCart"
 
-    @ID
+    @ID(key: .id)
     var id: UUID?
 
     @Field(key: "products")

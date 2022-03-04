@@ -17,7 +17,7 @@ final class Product: Model, Content {
 
     static let schema = "products"
 
-    @ID
+    @ID(key: .id)
     var id: UUID?
 
     @Field(key: "name")

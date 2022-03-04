@@ -21,4 +21,13 @@ struct ProductsController {
         return Product.find(id, on: req.db)
             .unwrap(or: Abort(.notFound))
     }
+
+    // DEBUG PURPOSES
+    func submitProducts(req: Request) throws -> EventLoopFuture<HTTPStatus> {
+        let product = try req.content.decode(Product.self)
+        return product.save(on: req.db)
+            .map {
+                .ok
+            }
+    }
 }
