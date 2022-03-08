@@ -30,7 +30,7 @@ struct ShoppingCartController {
             updateProductStockCount(id: productId, quantity: product.selectedQuantity, req: req)
         }
 
-        return ShoppingCart()
+        return shoppingCart
             .delete(on: req.db)
             .map { .ok }
     }
